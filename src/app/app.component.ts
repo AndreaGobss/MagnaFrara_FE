@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { SessionService } from './servizi/session.service';
@@ -10,8 +10,7 @@ import { User } from './modelli/user.model';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-
-export class AppComponent {
+export class AppComponent implements OnInit {
   loggedUser: User | null = null;
 
   constructor(private session: SessionService) {}

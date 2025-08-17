@@ -1,0 +1,110 @@
+<div class="account-container">
+  <!-- Se l'utente è loggato -->
+  <div class="logged-in-section" *ngIf="loggedUser">
+    <div class="user-card">
+      <h2>Il tuo account</h2>
+      <div class="user-details">
+        <p><strong>Nome:</strong> {{ loggedUser.nome }} {{ loggedUser.cognome }}</p>
+        <p><strong>Email:</strong> {{ loggedUser.email }}</p>
+        <p><strong>Tipo account:</strong> 
+          <span class="account-type" [class.gestore]="loggedUser.gestore">
+            {{ loggedUser.gestore ? 'Gestore' : 'Utente' }}
+          </span>
+        </p>
+      </div>
+      <button class="btn btn-logout" (click)="logout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- Se l'utente non è loggato -->
+  <div class="login-section" *ngIf="!loggedUser">
+    <div class="form-container">
+      <h2>{{ isRegistering ? 'Registrati' : 'Accedi' }}</h2>
+      
+      <!-- Messaggi di errore/successo -->
+      <div class="message error" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+      <div class="message success" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+
+      <form (ngSubmit)="onSubmit()" #authForm="ngForm">
+        <!-- Campi per registrazione -->
+        <div class="form-group" *ngIf="isRegistering">
+          <label for="nome">Nome</label>
+          <input 
+            type="text" 
+            id="nome" 
+            name="nome" 
+            [(ngModel)]="formData.nome" 
+            required 
+            class="form-control">
+        </div>
+
+        <div class="form-group" *ngIf="isRegistering">
+          <label for="cognome">Cognome</label>
+          <input 
+            type="text" 
+            id="cognome" 
+            name="cognome" 
+            [(ngModel)]="formData.cognome" 
+            required 
+            class="form-control">
+        </div>
+
+        <!-- Email (sempre presente) -->
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            [(ngModel)]="formData.email" 
+            required 
+            class="form-control">
+        </div>
+
+        <!-- Password (solo per registrazione) -->
+        <div class="form-group" *ngIf="isRegistering">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            [(ngModel)]="formData.password" 
+            required 
+            class="form-control">
+        </div>
+
+        <!-- Checkbox gestore (solo per registrazione) -->
+        <div class="form-group checkbox-group" *ngIf="isRegistering">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              name="gestore" 
+              [(ngModel)]="formData.gestore">
+            <span class="checkbox-text">Sono un gestore di ristorante</span>
+          </label>
+        </div>
+
+        <!-- Pulsanti -->
+        <div class="form-actions">
+          <button 
+            type="submit" 
+            class="btn btn-primary" 
+            [disabled]="!authForm.form.valid || isLoading">
+            {{ isLoading ? 'Caricamento...' : (isRegistering ? 'Registrati' : 'Accedi') }}
+          </button>
+          
+          <button 
+            type="button" 
+            class="btn btn-secondary" 
+            (click)="toggleMode()">
+            {{ isRegistering ? 'Hai già un account? Accedi' : 'Non hai un account? Registrati' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

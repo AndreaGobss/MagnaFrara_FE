@@ -8,15 +8,25 @@ import {
 import { RistorantiListResponse } from '../modelli/response-types.model';
 import { ApiResponse } from '../modelli/api-response.model';
 import { QueryParams } from '../modelli/pagination.model';
+import { MockRistoranteService } from './mock-ristorante.service';
+import { EnvironmentService } from './environment.service';
 
 @Injectable({ providedIn: 'root' })
 export class RistoranteService {
     private apiUrl = 'http://localhost:3000/api/ristoranti';
 
-    constructor(private http: HttpClient) {}
+    constructor(
+        private http: HttpClient,
+        private mockService: MockRistoranteService,
+        private env: EnvironmentService
+    ) {}
 
     // Ottieni tutti i ristoranti con paginazione e filtri
     getRistoranti(params?: QueryParams): Observable<RistorantiListResponse> {
+        if (this.env.useMockServices) {
+            return this.mockService.getRistoranti(params);
+        }
+
         let httpParams = new HttpParams();
         
         if (params) {
@@ -32,6 +42,10 @@ export class RistoranteService {
 
     // Ottieni un ristorante specifico per ID
     getRistoranteById(id: number): Observable<Ristorante> {
+        if (this.env.useMockServices) {
+            return this.mockService.getRistoranteById(id);
+        }
+
         return this.http.get<ApiResponse<Ristorante>>(`${this.apiUrl}/${id}`)
             .pipe(map(response => response.data!));
     }

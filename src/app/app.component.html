@@ -1,0 +1,23 @@
+<header class="header">
+  <div class="container">
+    <h1 class="logo">MagnaFrara</h1>
+    
+    <!-- Navigazione principale -->
+    <nav class="nav">
+      <a routerLink="/ristoranti" class="nav-link">Ristoranti</a>
+      <a routerLink="/account" class="nav-link">Account</a>
+    </nav>
+    
+    <!-- Info utente -->
+    <div class="user-info" *ngIf="loggedUser">
+      <span class="user-name">Ciao, {{ loggedUser.nome }}!</span>
+      <span class="user-type" *ngIf="loggedUser.gestore">(Gestore)</span>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <div class="container">
+    <router-outlet></router-outlet>
+  </div>
+</main>
