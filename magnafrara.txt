@@ -1,0 +1,10 @@
+Funzionalità Base:
+Login/logout/registrazione degli Utenti
+Vedere i ristoranti +  filtri (per nome (ASC/DESC), per valutazione (ASC/DESC), discriminazione per valutazione)
+Selezionando un ristorante si vede: nome, (dati generali), foto menu, recensioni. se loggati pulsante “aggiungi recensione” 
+Form per l’aggiunta della recensione
+
+Viste:
+se non loggato: visualizzare ristoranti e recensioni
+se loggato come utente: visualizzare ristoranti e recensioni, aggiungere recensioni
+se loggato come gestore: visualizzare ristoranti e recensioni, aggiungere recensioni, modificare i dati del proprio ristorante.

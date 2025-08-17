@@ -1,0 +1,326 @@
+Formati Comuni
+Date: ISO 8601 (YYYY-MM-DDTHH:mm:ss.sssZ)
+Valutazioni: Numero decimale da 1.0 a 5.0
+Paginazione: page (default: 1), limit (default: 10)
+Ordinamento: sort (asc | desc), sortBy (campo per ordinamento)
+Struttura Risposte
+// Successo
+{
+  "success": true,
+  "data": { ... },
+  "message": "Optional success message"
+}
+
+// Errore
+{
+  "success": false,
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Human readable error message",
+    "details": { ... } // Optional
+  }
+}
+
+
+Autenticazione
+POST /api/auth/register
+Request Body:
+{
+  "nome": "Mario",
+  "cognome": "Rossi",
+  "email": "mario.rossi@email.com",
+  "password": "password123",
+  "gestore": false
+}
+
+Response (201 Created):
+{
+  "success": true,
+  "data": {
+    "id_utente": 123,
+    "nome": "Mario",
+    "cognome": "Rossi",
+    "email": "mario.rossi@email.com",
+    "gestore": false
+  },
+  "message": "Registrazione completata con successo"
+}
+
+GET /api/auth/{nome_utente}
+Response (200 OK):
+{
+  "success": true,
+  "data": {
+    "id_utente": 123,
+    "nome": "Mario",
+    "cognome": "Rossi",
+    "email": "mario.rossi@email.com",
+    "gestore": false
+  },
+  "message": "Login effettuato con successo"
+}
+
+
+Ristoranti
+GET /api/ristoranti/{id_ristorante}
+Response (200 OK):
+{
+  "success": true,
+  "data": {
+    "id_ristorante": 456,
+    "nome": "Trattoria del Borgo",
+    "rist_img": "/uploads/ristoranti/456/main.jpg",
+    "menu_img": "/uploads/ristoranti/456/menu.jpg",
+    "tipo_cucina": "Italiana",
+    "descrizione": "Autentica cucina italiana nel centro storico...",
+    "avg_valutazione": 4.3,
+    "numero_recensioni": 87,
+    "id_gestore": 789,
+    "gestore": {
+      "nome": "Giuseppe",
+      "cognome": "Bianchi"
+    },
+    "created_at": "2024-01-10T14:20:00.000Z"
+  }
+}
+
+GET /api/ristoranti?page=1&limit=10&sortBy=valutazione&sort=desc
+Response (200 OK):
+{
+  "success": true,
+  "data": {
+    "ristoranti": [
+      {
+        "id_ristorante": 456,
+        "nome": "Trattoria del Borgo",
+        "rist_img": "/uploads/ristoranti/456/main.jpg",
+        "tipo_cucina": "Italiana",
+        "descrizione": "Autentica cucina italiana nel centro storico...",
+        "avg_valutazione": 4.3,
+        "numero_recensioni": 87
+      }
+    ],
+    "pagination": {
+      "current_page": 1,
+      "per_page": 10,
+      "total": 150,
+      "total_pages": 15,
+      "has_next": true,
+      "has_prev": false
+    }
+  }
+}
+
+POST /api/ristoranti/{id_ristorante} (Modifica)
+Request Body:
+{
+  "nome": "Nuovo Nome Ristorante",
+  "tipo_cucina": "Fusion",
+  "descrizione": "Nuova descrizione...",
+  "rist_img": "base64encodedimage...", // Optional
+  "menu_img": "base64encodedimage..." // Optional
+}
+
+Response (200 OK):
+{
+  "success": true,
+  "data": {
+    "id_ristorante": 456,
+    "nome": "Nuovo Nome Ristorante",
+    "rist_img": "/uploads/ristoranti/456/main.jpg",
+    "menu_img": "/uploads/ristoranti/456/menu.jpg",
+    "tipo_cucina": "Fusion",
+    "descrizione": "Nuova descrizione...",
+    "avg_valutazione": 4.3,
+    "numero_recensioni": 87,
+    "id_gestore": 789,
+    "updated_at": "2024-01-15T16:45:00.000Z"
+  },
+  "message": "Ristorante aggiornato con successo"
+}
+
+
+Recensioni
+GET /api/recensioni/{id_rist}?page=1&limit=10&sortBy=data_pubb&sort=desc
+Response (200 OK):
+{
+  "success": true,
+  "data": {
+    "ristorante": {
+      "id_ristorante": 456,
+      "nome": "Trattoria del Borgo"
+    },
+    "recensioni": [
+      {
+        "id_rec": 789,
+        "id_utente": 123,
+        "utente": {
+          "nome": "Mario",
+          "cognome": "Rossi"
+        },
+        "titolo": "Esperienza fantastica!",
+        "testo": "Cibo delizioso e servizio impeccabile...",
+        "valutazione": 5.0,
+        "data_pubb": "2024-01-14T19:30:00.000Z"
+      }
+    ],
+    "pagination": {
+      "current_page": 1,
+      "per_page": 10,
+      "total": 87,
+      "total_pages": 9,
+      "has_next": true,
+      "has_prev": false
+    },
+    "stats": {
+      "avg_valutazione": 4.3,
+      "distribuzione_voti": {
+        "5": 45,
+        "4": 28,
+        "3": 10,
+        "2": 3,
+        "1": 1
+      }
+    }
+  }
+}
+
+GET /api/recensioni?page=1&limit=10&sortBy=valutazione&sort=desc
+Response (200 OK):
+{
+  "success": true,
+  "data": {
+    "recensioni": [
+      {
+        "id_rec": 789,
+        "id_utente": 123,
+        "utente": {
+          "nome": "Mario",
+          "cognome": "Rossi"
+        },
+        "id_ristorante": 456,
+        "ristorante": {
+          "nome": "Trattoria del Borgo",
+          "tipo_cucina": "Italiana"
+        },
+        "titolo": "Esperienza fantastica!",
+        "testo": "Cibo delizioso e servizio impeccabile...",
+        "valutazione": 5.0,
+        "data_pubb": "2024-01-14T19:30:00.000Z"
+      }
+    ],
+    "pagination": {
+      "current_page": 1,
+      "per_page": 10,
+      "total": 523,
+      "total_pages": 53,
+      "has_next": true,
+      "has_prev": false
+    }
+  }
+}
+
+POST /api/recensioni/{id_rist}
+Request Body:
+{
+  "id_utente": 123,
+  "titolo": "Esperienza fantastica!",
+  "testo": "Cibo delizioso e servizio impeccabile. Consiglio assolutamente!",
+  "valutazione": 5.0
+}
+
+Response (201 Created):
+{
+  "success": true,
+  "data": {
+    "id_rec": 789,
+    "id_utente": 123,
+    "id_ristorante": 456,
+    "titolo": "Esperienza fantastica!",
+    "testo": "Cibo delizioso e servizio impeccabile. Consiglio assolutamente!",
+    "valutazione": 5.0,
+    "data_pubb": "2024-01-15T20:15:00.000Z"
+  },
+  "message": "Recensione pubblicata con successo"
+}
+
+GET /api/recensioni/utente/{id_utente}?page=1&limit=10&sortBy=data_pubb&sort=desc
+Response (200 OK):
+{
+  "success": true,
+  "data": {
+    "utente": {
+      "id_utente": 123,
+      "nome": "Mario",
+      "cognome": "Rossi"
+    },
+    "recensioni": [
+      {
+        "id_rec": 789,
+        "id_ristorante": 456,
+        "ristorante": {
+          "nome": "Trattoria del Borgo",
+          "tipo_cucina": "Italiana",
+          "rist_img": "/uploads/ristoranti/456/main.jpg"
+        },
+        "titolo": "Esperienza fantastica!",
+        "testo": "Cibo delizioso e servizio impeccabile...",
+        "valutazione": 5.0,
+        "data_pubb": "2024-01-14T19:30:00.000Z"
+      }
+    ],
+    "pagination": {
+      "current_page": 1,
+      "per_page": 10,
+      "total": 12,
+      "total_pages": 2,
+      "has_next": true,
+      "has_prev": false
+    },
+    "stats": {
+      "media_valutazioni": 4.2,
+      "totale_recensioni": 12
+    }
+  }
+}
+Gestione Errori
+Errori Comuni
+400 Bad Request:
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Dati forniti non validi",
+    "details": {
+      "email": ["Email non valida"],
+      "nome": ["Nome obbligatorio"]
+    }
+  }
+}
+
+404 Not Found:
+{
+  "success": false,
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "Ristorante non trovato"
+  }
+}
+
+409 Conflict:
+{
+  "success": false,
+  "error": {
+    "code": "ALREADY_EXISTS",
+    "message": "Un utente con questa email è già registrato"
+  }
+}
+
+500 Internal Server Error:
+{
+  "success": false,
+  "error": {
+    "code": "INTERNAL_ERROR",
+    "message": "Errore interno del server"
+  }
+}
