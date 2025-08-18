@@ -1,0 +1,132 @@
+<div class="restaurants-container">
+  <h1>I nostri ristoranti</h1>
+  
+  <!-- Filtri e ordinamento -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <label for="sortBy">Ordina per:</label>
+      <select id="sortBy" [(ngModel)]="sortBy" (change)="onSortChange()" class="filter-select">
+        <option value="nome">Nome</option>
+        <option value="valutazione">Valutazione</option>
+      </select>
+    </div>
+    
+    <button class="sort-direction-btn" (click)="toggleSortDirection()">
+      <span *ngIf="sortDirection === 'asc'">↑ Crescente</span>
+      <span *ngIf="sortDirection === 'desc'">↓ Decrescente</span>
+    </button>
+  </div>
+
+  <!-- Container fisso per il contenuto principale -->
+  <div class="main-content">
+    <!-- Loading con skeleton -->
+    <div class="content-area" *ngIf="isLoading">
+      <div class="loading-message">
+        <p>Caricamento ristoranti...</p>
+      </div>
+      <div class="skeleton-grid">
+        <div class="skeleton-card" *ngFor="let item of [1,2,3,4,5,6,7,8,9]">
+          <div class="skeleton-image"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-line skeleton-title"></div>
+            <div class="skeleton-line skeleton-subtitle"></div>
+            <div class="skeleton-line skeleton-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Messaggio di errore -->
+    <div class="content-area" *ngIf="errorMessage">
+      <div class="error-message">
+        <p>{{ errorMessage }}</p>
+        <button class="btn btn-secondary" (click)="loadRistoranti()">Riprova</button>
+      </div>
+    </div>
+
+    <!-- Griglia ristoranti -->
+    <div class="content-area" *ngIf="!isLoading && !errorMessage">
+      <div class="restaurants-grid">
+        <div 
+          class="restaurant-card" 
+          *ngFor="let ristorante of ristoranti"
+          (click)="viewRistorante(ristorante)">
+          
+          <!-- Immagine ristorante -->
+          <div class="restaurant-image">
+            <div class="image-placeholder">
+              <span class="placeholder-text">{{ ristorante.nome }}</span>
+            </div>
+            <div class="image-overlay">
+              <span class="tipo-cucina">{{ ristorante.tipo_cucina }}</span>
+            </div>
+          </div>
+
+          <!-- Info ristorante -->
+          <div class="restaurant-info">
+            <h3 class="restaurant-name">{{ ristorante.nome }}</h3>
+            
+            <!-- Valutazione -->
+            <div class="rating-section">
+              <div class="stars">
+                <span 
+                  *ngFor="let star of getStars(ristorante.avg_valutazione); let i = index"
+                  class="star"
+                  [class.filled]="star === 1">
+                  ★
+                </span>
+              </div>
+              <span class="rating-number">{{ formatRating(ristorante.avg_valutazione) }}</span>
+              <span class="reviews-count">({{ ristorante.numero_recensioni }} recensioni)</span>
+            </div>
+
+            <!-- Descrizione breve -->
+            <p class="restaurant-description">
+              {{ ristorante.descrizione.length > 100 ? 
+                 (ristorante.descrizione | slice:0:100) + '...' : 
+                 ristorante.descrizione }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Messaggio se nessun ristorante trovato -->
+      <div class="no-results" *ngIf="ristoranti.length === 0">
+        <p>Nessun ristorante trovato.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paginazione -->
+  <div class="pagination" *ngIf="!isLoading && !errorMessage && totalPages > 1">
+    <div class="pagination-info">
+      <span>Pagina {{ currentPage }} di {{ totalPages }} - {{ totalRistoranti }} ristoranti totali</span>
+    </div>
+    
+    <div class="pagination-controls">
+      <button 
+        class="btn btn-secondary"
+        (click)="previousPage()"
+        [disabled]="currentPage === 1">
+        ← Precedente
+      </button>
+      
+      <div class="page-numbers">
+        <button 
+          *ngFor="let page of [].constructor(totalPages); let i = index"
+          class="page-btn"
+          [class.active]="i + 1 === currentPage"
+          (click)="goToPage(i + 1)">
+          {{ i + 1 }}
+        </button>
+      </div>
+      
+      <button 
+        class="btn btn-secondary"
+        (click)="nextPage()"
+        [disabled]="currentPage === totalPages">
+        Successiva →
+      </button>
+    </div>
+  </div>
+</div>

@@ -67,6 +67,7 @@ export class MockRistoranteService {
                                 valueB = b.nome.toLowerCase();
                                 break;
                             case 'valutazione':
+                            case 'avg_valutazione':
                                 valueA = a.avg_valutazione;
                                 valueB = b.avg_valutazione;
                                 break;

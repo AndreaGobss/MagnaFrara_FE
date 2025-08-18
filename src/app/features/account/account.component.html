@@ -1,20 +1,21 @@
-<div class="account-container">
-  <!-- Se l'utente è loggato -->
-  <div class="logged-in-section" *ngIf="loggedUser">
-    <div class="user-card">
-      <h2>Il tuo account</h2>
-      <div class="user-details">
-        <p><strong>Nome:</strong> {{ loggedUser.nome }} {{ loggedUser.cognome }}</p>
-        <p><strong>Email:</strong> {{ loggedUser.email }}</p>
-        <p><strong>Tipo account:</strong> 
-          <span class="account-type" [class.gestore]="loggedUser.gestore">
-            {{ loggedUser.gestore ? 'Gestore' : 'Utente' }}
-          </span>
-        </p>
+<div class="account-wrapper">
+  <div class="account-container">
+    <!-- Se l'utente è loggato -->
+    <div class="logged-in-section" *ngIf="loggedUser">
+      <div class="user-card">
+        <h2>Il tuo account</h2>
+        <div class="user-details">
+          <p><strong>Nome:</strong> {{ loggedUser.nome }} {{ loggedUser.cognome }}</p>
+          <p><strong>Email:</strong> {{ loggedUser.email }}</p>
+          <p><strong>Tipo account:</strong> 
+            <span class="account-type" [class.gestore]="loggedUser.gestore">
+              {{ loggedUser.gestore ? 'Gestore' : 'Utente' }}
+            </span>
+          </p>
+        </div>
+        <button class="btn btn-logout" (click)="logout()">Logout</button>
       </div>
-      <button class="btn btn-logout" (click)="logout()">Logout</button>
     </div>
-  </div>
 
   <!-- Se l'utente non è loggato -->
   <div class="login-section" *ngIf="!loggedUser">
@@ -106,5 +107,6 @@
         </div>
       </form>
     </div>
+  </div>
   </div>
 </div>
