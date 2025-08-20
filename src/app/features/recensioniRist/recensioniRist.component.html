@@ -1,0 +1,308 @@
+<div class="restaurant-detail-container">
+  <!-- Header con bottone indietro -->
+  <div class="header-section">
+    <button class="btn btn-back" (click)="goBack()">
+      ← Torna ai ristoranti
+    </button>
+  </div>
+
+  <!-- Loading principale -->
+  <div class="loading" *ngIf="isLoading">
+    <p>Caricamento dati ristorante...</p>
+  </div>
+
+  <!-- Contenuto principale -->
+  <div class="main-content" *ngIf="!isLoading && ristorante">
+    <!-- Sezione ristorante -->
+    <div class="restaurant-section">
+      <div class="restaurant-images">
+        <!-- Immagine ristorante -->
+        <div class="restaurant-image">
+          <div class="image-placeholder">
+            <span class="placeholder-text">{{ ristorante.nome }}</span>
+          </div>
+        </div>
+        
+        <!-- Immagine menu -->
+        <div class="menu-image">
+          <div class="image-placeholder">
+            <span class="placeholder-text">Menu</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info ristorante -->
+      <div class="restaurant-info">
+        <h1>{{ ristorante.nome }}</h1>
+        
+        <div class="restaurant-details">
+          <p class="tipo-cucina"><strong>Tipo cucina:</strong> {{ ristorante.tipo_cucina }}</p>
+          <p class="descrizione">{{ ristorante.descrizione }}</p>
+          
+          <!-- Valutazione generale -->
+          <div class="rating-section">
+            <div class="rating-display">
+              <div class="stars">
+                <span 
+                  *ngFor="let star of getStars(ristorante.avg_valutazione); let i = index"
+                  class="star"
+                  [class.filled]="star === 1">
+                  ★
+                </span>
+              </div>
+              <span class="rating-number">{{ formatRating(ristorante.avg_valutazione) }}</span>
+              <span class="reviews-count">({{ ristorante.numero_recensioni }} recensioni)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Azioni per gestore -->
+        <div class="restaurant-actions" *ngIf="isGestore">
+          <button class="btn btn-edit" (click)="toggleEditRestaurant()">
+            {{ showEditRestaurant ? 'Annulla modifica' : 'Modifica ristorante' }}
+          </button>
+        </div>
+
+        <!-- Form modifica ristorante (solo gestori) -->
+        <div class="edit-restaurant-form" *ngIf="showEditRestaurant && isGestore">
+          <div class="form-container">
+            <h3>Modifica ristorante</h3>
+            
+            <form (ngSubmit)="submitRestaurantUpdate()" #restaurantForm="ngForm">
+              <div class="form-group">
+                <label for="restaurantNome">Nome ristorante *</label>
+                <input 
+                  type="text" 
+                  id="restaurantNome" 
+                  name="restaurantNome"
+                  [(ngModel)]="restaurantUpdateData.nome"
+                  class="form-control"
+                  required
+                  maxlength="100"
+                  placeholder="Nome del ristorante">
+              </div>
+
+              <div class="form-group">
+                <label for="restaurantTipoCucina">Tipo cucina *</label>
+                <input 
+                  type="text" 
+                  id="restaurantTipoCucina" 
+                  name="restaurantTipoCucina"
+                  [(ngModel)]="restaurantUpdateData.tipo_cucina"
+                  class="form-control"
+                  required
+                  maxlength="50"
+                  placeholder="Es: Italiana, Giapponese, Messicana...">
+              </div>
+
+              <div class="form-group">
+                <label for="restaurantDescrizione">Descrizione *</label>
+                <textarea 
+                  id="restaurantDescrizione" 
+                  name="restaurantDescrizione"
+                  [(ngModel)]="restaurantUpdateData.descrizione"
+                  class="form-control"
+                  required
+                  rows="4"
+                  maxlength="500"
+                  placeholder="Descrizione del ristorante..."></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button 
+                  type="submit" 
+                  class="btn btn-primary"
+                  [disabled]="!restaurantForm.form.valid || isUpdatingRestaurant">
+                  {{ isUpdatingRestaurant ? 'Aggiornamento in corso...' : 'Aggiorna ristorante' }}
+                </button>
+                <button 
+                  type="button" 
+                  class="btn btn-secondary"
+                  (click)="toggleEditRestaurant()">
+                  Annulla
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sezione recensioni -->
+    <div class="reviews-section">
+      <div class="reviews-header">
+        <h2>Recensioni</h2>
+        
+        <!-- Filtri e ordinamento -->
+        <div class="filters-section">
+          <div class="filter-group">
+            <label for="sortBy">Ordina per:</label>
+            <select id="sortBy" [(ngModel)]="sortBy" (change)="onSortChange()" class="filter-select">
+              <option value="data_pubb">Data</option>
+              <option value="valutazione">Valutazione</option>
+            </select>
+          </div>
+          
+          <button class="sort-direction-btn" (click)="toggleSortDirection()">
+            <span *ngIf="sortDirection === 'asc'">↑ Crescente</span>
+            <span *ngIf="sortDirection === 'desc'">↓ Decrescente</span>
+          </button>
+        </div>
+
+        <!-- Bottone aggiungi recensione (solo utenti normali loggati) -->
+        <div class="add-review-section" *ngIf="loggedUser && !isGestore">
+          <button class="btn btn-primary" (click)="toggleAddReview()">
+            {{ showAddReview ? 'Annulla' : 'Aggiungi recensione' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Form aggiungi recensione -->
+      <div class="add-review-form" *ngIf="showAddReview && loggedUser && !isGestore">
+        <div class="form-container">
+          <h3>Aggiungi la tua recensione</h3>
+          
+          <form (ngSubmit)="submitReview()" #reviewForm="ngForm">
+            <div class="form-group">
+              <label for="titolo">Titolo *</label>
+              <input 
+                type="text" 
+                id="titolo" 
+                name="titolo"
+                [(ngModel)]="newReview.titolo"
+                class="form-control"
+                required
+                maxlength="100"
+                placeholder="Titolo della tua recensione">
+            </div>
+
+            <div class="form-group">
+              <label for="testo">Recensione *</label>
+              <textarea 
+                id="testo" 
+                name="testo"
+                [(ngModel)]="newReview.testo"
+                class="form-control"
+                required
+                rows="4"
+                maxlength="500"
+                placeholder="Scrivi la tua esperienza..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="valutazione">Valutazione *</label>
+              <div class="rating-input">
+                <select 
+                  id="valutazione" 
+                  name="valutazione"
+                  [(ngModel)]="newReview.valutazione"
+                  class="form-control rating-select"
+                  required>
+                  <option value="1">1 stella - Pessimo</option>
+                  <option value="2">2 stelle - Scarso</option>
+                  <option value="3">3 stelle - Nella media</option>
+                  <option value="4">4 stelle - Buono</option>
+                  <option value="5">5 stelle - Eccellente</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button 
+                type="submit" 
+                class="btn btn-primary"
+                [disabled]="!reviewForm.form.valid || isSubmittingReview">
+                {{ isSubmittingReview ? 'Invio in corso...' : 'Invia recensione' }}
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-secondary"
+                (click)="toggleAddReview()">
+                Annulla
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Loading recensioni -->
+      <div class="loading-reviews" *ngIf="isLoadingRecensioni">
+        <p>Caricamento recensioni...</p>
+      </div>
+
+      <!-- Lista recensioni -->
+      <div class="reviews-list" *ngIf="!isLoadingRecensioni">
+        <div class="review-card" *ngFor="let recensione of recensioni">
+          <div class="review-header">
+            <div class="user-info">
+              <h4>{{ recensione.utente.nome }} {{ recensione.utente.cognome }}</h4>
+              <span class="review-date">{{ formatDate(recensione.data_pubb) }}</span>
+            </div>
+            
+            <div class="review-rating">
+              <div class="stars">
+                <span 
+                  *ngFor="let star of getStars(recensione.valutazione); let i = index"
+                  class="star"
+                  [class.filled]="star === 1">
+                  ★
+                </span>
+              </div>
+              <span class="rating-number">{{ formatRating(recensione.valutazione) }}</span>
+            </div>
+          </div>
+
+          <div class="review-content">
+            <h5 class="review-title">{{ recensione.titolo }}</h5>
+            <p class="review-text">{{ recensione.testo }}</p>
+          </div>
+        </div>
+
+        <!-- Messaggio se nessuna recensione -->
+        <div class="no-reviews" *ngIf="recensioni.length === 0">
+          <p>Nessuna recensione ancora disponibile per questo ristorante.</p>
+          <p *ngIf="loggedUser && !isGestore">Sii il primo a lasciare una recensione!</p>
+        </div>
+      </div>
+
+      <!-- Paginazione -->
+      <div class="pagination" *ngIf="!isLoadingRecensioni && totalPages > 1">
+        <div class="pagination-info">
+          <span>Pagina {{ currentPage }} di {{ totalPages }} - {{ totalRecensioni }} recensioni totali</span>
+        </div>
+        
+        <div class="pagination-controls">
+          <button 
+            class="btn btn-secondary"
+            (click)="previousPage()"
+            [disabled]="currentPage === 1">
+            ← Precedente
+          </button>
+          
+          <div class="page-numbers">
+            <button 
+              *ngFor="let page of [].constructor(totalPages); let i = index"
+              class="page-btn"
+              [class.active]="i + 1 === currentPage"
+              (click)="goToPage(i + 1)">
+              {{ i + 1 }}
+            </button>
+          </div>
+          
+          <button 
+            class="btn btn-secondary"
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages">
+            Successiva →
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messaggio di errore -->
+  <div class="error-message" *ngIf="errorMessage">
+    <p>{{ errorMessage }}</p>
+    <button class="btn btn-secondary" (click)="loadRistoranteData()">Riprova</button>
+  </div>
+</div>

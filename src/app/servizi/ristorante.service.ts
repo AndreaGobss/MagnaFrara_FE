@@ -52,6 +52,10 @@ export class RistoranteService {
 
     // Aggiorna i dati di un ristorante (solo per gestori)
     updateRistorante(id: number, updateData: RistoranteUpdateRequest): Observable<Ristorante> {
+        if (this.env.useMockServices) {
+            return this.mockService.updateRistorante(id, updateData);
+        }
+
         return this.http.post<ApiResponse<Ristorante>>(`${this.apiUrl}/${id}`, updateData)
             .pipe(map(response => response.data!));
     }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, delay } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { Ristorante, RistoranteListItem } from '../modelli/ristorante.model';
+import { Ristorante, RistoranteListItem, RistoranteUpdateRequest } from '../modelli/ristorante.model';
 import { RistorantiListResponse } from '../modelli/response-types.model';
 import { QueryParams } from '../modelli/pagination.model';
 
@@ -127,6 +127,34 @@ export class MockRistoranteService {
                     throw new Error('Ristorante non trovato');
                 }
                 return of(ristorante);
+            })
+        );
+    }
+
+    updateRistorante(id: number, updateData: RistoranteUpdateRequest): Observable<Ristorante> {
+        return of(null).pipe(
+            delay(800),
+            switchMap(() => {
+                const ristoranteIndex = this.ristoranti.findIndex(r => r.id_ristorante === id);
+                if (ristoranteIndex === -1) {
+                    throw new Error('Ristorante non trovato');
+                }
+
+                // Aggiorna il ristorante
+                const updatedRistorante: Ristorante = {
+                    ...this.ristoranti[ristoranteIndex],
+                    nome: updateData.nome,
+                    tipo_cucina: updateData.tipo_cucina,
+                    descrizione: updateData.descrizione,
+                    rist_img: updateData.rist_img || this.ristoranti[ristoranteIndex].rist_img,
+                    menu_img: updateData.menu_img || this.ristoranti[ristoranteIndex].menu_img,
+                    updated_at: new Date().toISOString()
+                };
+
+                // Sostituisci nell'array
+                this.ristoranti[ristoranteIndex] = updatedRistorante;
+
+                return of(updatedRistorante);
             })
         );
     }

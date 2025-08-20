@@ -108,7 +108,7 @@ export class RestaurantComponent implements OnInit {
 
     // Navigazione al dettaglio ristorante
     viewRistorante(ristorante: RistoranteListItem): void {
-        this.router.navigate(['/ristoranti', ristorante.id_ristorante]);
+        this.router.navigate(['/ristorante', ristorante.id_ristorante]);
     }
 
     // Genera array per stelle valutazione

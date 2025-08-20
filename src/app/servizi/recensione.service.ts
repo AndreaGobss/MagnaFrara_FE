@@ -12,15 +12,25 @@ import {
 } from '../modelli/response-types.model';
 import { ApiResponse } from '../modelli/api-response.model';
 import { QueryParams } from '../modelli/pagination.model';
+import { MockRecensioneService } from './mock-recensione.service';
+import { EnvironmentService } from './environment.service';
 
 @Injectable({ providedIn: 'root' })
 export class RecensioneService {
     private apiUrl = 'http://localhost:3000/api/recensioni';
 
-    constructor(private http: HttpClient) {}
+    constructor(
+        private http: HttpClient,
+        private mockService: MockRecensioneService,
+        private env: EnvironmentService
+    ) {}
 
     // Ottieni tutte le recensioni con paginazione e filtri
     getRecensioni(params?: QueryParams): Observable<RecensioniListResponse> {
+        if (this.env.useMockServices) {
+            return this.mockService.getRecensioni(params);
+        }
+
         let httpParams = new HttpParams();
         
         if (params) {
@@ -36,6 +46,10 @@ export class RecensioneService {
 
     // Ottieni recensioni per un ristorante specifico
     getRecensioniByRistorante(idRistorante: number, params?: QueryParams): Observable<RecensioniRistoranteResponse> {
+        if (this.env.useMockServices) {
+            return this.mockService.getRecensioniByRistorante(idRistorante, params);
+        }
+
         let httpParams = new HttpParams();
         
         if (params) {
@@ -51,6 +65,10 @@ export class RecensioneService {
 
     // Ottieni recensioni di un utente specifico
     getRecensioniByUtente(idUtente: number, params?: QueryParams): Observable<RecensioniUtenteResponse> {
+        if (this.env.useMockServices) {
+            return this.mockService.getRecensioniByUtente(idUtente, params);
+        }
+
         let httpParams = new HttpParams();
         
         if (params) {
@@ -66,6 +84,10 @@ export class RecensioneService {
 
     // Crea una nuova recensione
     createRecensione(idRistorante: number, recensioneData: RecensioneCreateRequest): Observable<Recensione> {
+        if (this.env.useMockServices) {
+            return this.mockService.createRecensione(idRistorante, recensioneData);
+        }
+
         return this.http.post<ApiResponse<Recensione>>(`${this.apiUrl}/${idRistorante}`, recensioneData)
             .pipe(map(response => response.data!));
     }
