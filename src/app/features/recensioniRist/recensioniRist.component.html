@@ -6,7 +6,7 @@
     </button>
   </div>
 
-  <!-- Loading principale -->
+  <!-- Loading princ                  <h4>{{ recensione.utente?.nome }} {{ recensione.utente?.cognome }}</h4>pale -->
   <div class="loading" *ngIf="isLoading">
     <p>Caricamento dati ristorante...</p>
   </div>
@@ -235,7 +235,7 @@
         <div class="review-card" *ngFor="let recensione of recensioni">
           <div class="review-header">
             <div class="user-info">
-              <h4>{{ recensione.utente.nome }} {{ recensione.utente.cognome }}</h4>
+              <h4>{{ recensione.utente?.nome }} {{ recensione.utente?.cognome }}</h4>
               <span class="review-date">{{ formatDate(recensione.data_pubb) }}</span>
             </div>
             

@@ -1,0 +1,163 @@
+<div class="user-reviews-container">
+  <!-- Header -->
+  <div class="header-section">
+    <h1>Le mie recensioni</h1>
+    <p class="subtitle" *ngIf="loggedUser">
+      Tutte le recensioni di {{ loggedUser.nome }} {{ loggedUser.cognome }}
+    </p>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" *ngIf="isLoading">
+    <p>Caricamento delle tue recensioni...</p>
+  </div>
+
+  <!-- Contenuto principale -->
+  <div class="main-content" *ngIf="!isLoading && loggedUser">
+    
+    <!-- Statistiche utente -->
+    <div class="user-stats" *ngIf="totalRecensioni > 0">
+      <div class="stats-card">
+        <h2>Le tue statistiche</h2>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-number">{{ totalRecensioni }}</span>
+            <span class="stat-label">Recensioni totali</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">{{ formatRating(mediaValutazioni) }}</span>
+            <span class="stat-label">Valutazione media</span>
+          </div>
+        </div>
+        
+        <!-- Distribuzione stelle -->
+        <div class="stars-distribution" *ngIf="totalRecensioni > 0">
+          <h3>Distribuzione delle tue valutazioni</h3>
+          <div class="distribution-bars">
+            <div class="bar-item" *ngFor="let item of [5,4,3,2,1]">
+              <span class="star-label">{{ item }} ★</span>
+              <div class="bar-container">
+                <div 
+                  class="bar-fill" 
+                  [style.width.%]="totalRecensioni > 0 ? (getStarsDistribution()[item.toString()] / totalRecensioni * 100) : 0">
+                </div>
+              </div>
+              <span class="bar-count">{{ getStarsDistribution()[item.toString()] }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtri e ordinamento -->
+    <div class="filters-section" *ngIf="totalRecensioni > 0">
+      <h2>Le tue recensioni</h2>
+      
+      <div class="filters-controls">
+        <div class="filter-group">
+          <label for="sortBy">Ordina per:</label>
+          <select id="sortBy" [(ngModel)]="sortBy" (change)="onSortChange()" class="filter-select">
+            <option value="data_pubb">Data pubblicazione</option>
+            <option value="valutazione">Valutazione</option>
+          </select>
+        </div>
+        
+        <button class="sort-direction-btn" (click)="toggleSortDirection()">
+          <span *ngIf="sortDirection === 'asc'">↑ Crescente</span>
+          <span *ngIf="sortDirection === 'desc'">↓ Decrescente</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Lista recensioni -->
+    <div class="reviews-list" *ngIf="totalRecensioni > 0">
+      <div class="review-card" *ngFor="let recensione of recensioni">
+        <div class="review-header">
+          <div class="restaurant-info">
+            <h3 
+              class="restaurant-name clickable" 
+              (click)="viewRestaurant(recensione.id_ristorante)">
+              {{ recensione.ristorante?.nome || 'Ristorante #' + recensione.id_ristorante }}
+            </h3>
+            <span class="review-date">{{ formatDate(recensione.data_pubb) }}</span>
+          </div>
+          
+          <div class="review-rating">
+            <div class="stars">
+              <span 
+                *ngFor="let star of getStars(recensione.valutazione); let i = index"
+                class="star"
+                [class.filled]="star === 1">
+                ★
+              </span>
+            </div>
+            <span class="rating-number">{{ formatRating(recensione.valutazione) }}</span>
+          </div>
+        </div>
+
+        <div class="review-content">
+          <h4 class="review-title">{{ recensione.titolo }}</h4>
+          <p class="review-text">{{ recensione.testo }}</p>
+        </div>
+
+        <div class="review-actions">
+          <button 
+            class="btn btn-view-restaurant" 
+            (click)="viewRestaurant(recensione.id_ristorante)">
+            Vai al ristorante
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Messaggio se nessuna recensione -->
+    <div class="no-reviews" *ngIf="totalRecensioni === 0 && !isLoading">
+      <div class="empty-state">
+        <h2>Non hai ancora scritto recensioni</h2>
+        <p>Inizia a esplorare i ristoranti e condividi la tua esperienza!</p>
+        <button class="btn btn-primary" (click)="goToRestaurants()">
+          Esplora ristoranti
+        </button>
+      </div>
+    </div>
+
+    <!-- Paginazione -->
+    <div class="pagination" *ngIf="totalRecensioni > 0 && totalPages > 1">
+      <div class="pagination-info">
+        <span>Pagina {{ currentPage }} di {{ totalPages }} - {{ totalRecensioni }} recensioni totali</span>
+      </div>
+      
+      <div class="pagination-controls">
+        <button 
+          class="btn btn-secondary"
+          (click)="previousPage()"
+          [disabled]="currentPage === 1">
+          ← Precedente
+        </button>
+        
+        <div class="page-numbers">
+          <button 
+            *ngFor="let page of [].constructor(totalPages); let i = index"
+            class="page-btn"
+            [class.active]="i + 1 === currentPage"
+            (click)="goToPage(i + 1)">
+            {{ i + 1 }}
+          </button>
+        </div>
+        
+        <button 
+          class="btn btn-secondary"
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages">
+          Successiva →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messaggio di errore -->
+  <div class="error-message" *ngIf="errorMessage">
+    <p>{{ errorMessage }}</p>
+    <button class="btn btn-secondary" (click)="loadUserRecensioni()">Riprova</button>
+  </div>
+</div>

@@ -2,15 +2,21 @@ import { UserBasicInfo } from './user.model';
 import { RistoranteBasicInfo } from './ristorante.model';
 
 export interface Recensione {
-  id_rec: number;
-  id_utente: number;
-  utente: UserBasicInfo;
-  id_ristorante: number;
-  ristorante?: RistoranteBasicInfo;
-  titolo: string;
-  testo: string;
-  valutazione: number; // da 1.0 a 5.0
-  data_pubb: string; // ISO 8601 format
+    id_rec: number;
+    id_utente: number;
+    utente?: {
+        nome: string;
+        cognome: string;
+    };
+    id_ristorante: number;
+    ristorante?: {
+        id_ristorante: number;
+        nome: string;
+    };
+    titolo: string;
+    testo: string;
+    valutazione: number;
+    data_pubb: string;
 }
 
 export interface RecensioneCreateRequest {
