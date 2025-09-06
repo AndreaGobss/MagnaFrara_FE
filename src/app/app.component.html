@@ -6,6 +6,7 @@
     <nav class="nav">
       <a routerLink="/ristoranti" class="nav-link">Ristoranti</a>
       <a routerLink="/mie-recensioni" class="nav-link" *ngIf="loggedUser">Le mie recensioni</a>
+      <a routerLink="/miei-ristoranti" class="nav-link" *ngIf="loggedUser && loggedUser.gestore">I miei ristoranti</a>
       <a routerLink="/account" class="nav-link">Account</a>
     </nav>
     

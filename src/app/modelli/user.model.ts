@@ -14,6 +14,11 @@ export interface UserRegistrationRequest {
   gestore: boolean;
 }
 
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
 export interface UserBasicInfo {
   nome: string;
   cognome: string;

@@ -10,8 +10,9 @@ export interface Recensione {
     };
     id_ristorante: number;
     ristorante?: {
-        id_ristorante: number;
         nome: string;
+        tipo_cucina: string;
+        rist_img: string;
     };
     titolo: string;
     testo: string;
@@ -23,7 +24,7 @@ export interface RecensioneCreateRequest {
   id_utente: number;
   titolo: string;
   testo: string;
-  valutazione: number; // da 1.0 a 5.0
+  valutazione: number; // da 1 a 5 (intero)
 }
 
 export interface RecensioniStats {
@@ -38,6 +39,12 @@ export interface RecensioniStats {
 }
 
 export interface RecensioniUtenteStats {
-  media_valutazioni: number;
-  totale_recensioni: number;
+  avg_valutazione: number;
+  distribuzione_voti: {
+    '5': number;
+    '4': number;
+    '3': number;
+    '2': number;
+    '1': number;
+  };
 }

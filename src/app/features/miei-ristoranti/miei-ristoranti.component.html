@@ -1,5 +1,5 @@
 <div class="restaurants-container">
-  <h1>I nostri ristoranti</h1>
+  <h1>I miei ristoranti</h1>
   
   <!-- Filtri e ordinamento -->
   <div class="filters-section">
@@ -10,7 +10,7 @@
           type="text" 
           [(ngModel)]="searchTerm" 
           (input)="onSearchInput(searchTerm)"
-          placeholder="Cerca ristoranti..."
+          placeholder="Cerca nei tuoi ristoranti..."
           class="search-input"
         />
         <button 
@@ -52,7 +52,7 @@
     <!-- Loading con skeleton (solo per caricamento iniziale) -->
     <div class="content-area" *ngIf="isLoading && !isSearching">
       <div class="loading-message">
-        <p>Caricamento ristoranti...</p>
+        <p>Caricamento tuoi ristoranti...</p>
       </div>
       <div class="skeleton-grid">
         <div class="skeleton-card" *ngFor="let item of [1,2,3,4,5,6,7,8,9]">
@@ -79,8 +79,7 @@
       <div class="restaurants-grid" [class.searching]="isSearching" [class.sorting]="isSorting">
         <div 
           class="restaurant-card" 
-          *ngFor="let ristorante of ristoranti"
-          (click)="viewRistorante(ristorante)">
+          *ngFor="let ristorante of ristoranti">
           
           <!-- Immagine ristorante -->
           <div class="restaurant-image">
@@ -119,13 +118,22 @@
                  (ristorante.descrizione | slice:0:100) + '...' : 
                  ristorante.descrizione }}
             </p>
+
+            <!-- Azioni per gestore -->
+            <div class="restaurant-actions">
+              <button 
+                class="btn btn-primary"
+                (click)="viewRistorante(ristorante)">
+                Visualizza
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Messaggio se nessun ristorante trovato -->
       <div class="no-results" *ngIf="ristoranti.length === 0">
-        <p>Nessun ristorante trovato.</p>
+        <p>Non hai ancora ristoranti registrati.</p>
       </div>
     </div>
   </div>
@@ -133,7 +141,7 @@
   <!-- Paginazione -->
   <div class="pagination" *ngIf="!isLoading && !errorMessage && totalPages > 1">
     <div class="pagination-info">
-      <span>Pagina {{ currentPage }} di {{ totalPages }} - {{ totalRistoranti }} ristoranti totali</span>
+      <span>Pagina {{ currentPage }} di {{ totalPages }} - {{ totalRistoranti }} tuoi ristoranti</span>
     </div>
     
     <div class="pagination-controls">

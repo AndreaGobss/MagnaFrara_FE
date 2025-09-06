@@ -25,8 +25,9 @@ export class RecensioniUserComponent implements OnInit {
     currentPage: number = 1;
     totalPages: number = 1;
     
-    // Statistiche utente
+    // Statistiche utente (dal backend)
     mediaValutazioni: number = 0;
+    distribuzioneVoti: { [key: string]: number } = { '5': 0, '4': 0, '3': 0, '2': 0, '1': 0 };
     
     // Filtri e ordinamento
     sortBy: 'data_pubb' | 'valutazione' = 'data_pubb';
@@ -82,7 +83,13 @@ export class RecensioniUserComponent implements OnInit {
                 this.recensioni = response.recensioni;
                 this.totalRecensioni = response.pagination.total;
                 this.totalPages = response.pagination.total_pages;
-                this.mediaValutazioni = response.stats.media_valutazioni;
+                
+                // Statistiche dal backend
+                if (response.stats) {
+                    this.mediaValutazioni = response.stats.avg_valutazione;
+                    this.distribuzioneVoti = response.stats.distribuzione_voti;
+                }
+                
                 this.isLoading = false;
             },
             error: (error) => {
@@ -157,17 +164,8 @@ export class RecensioniUserComponent implements OnInit {
         });
     }
 
-    // Calcola distribuzione stelle per l'utente
+    // Ottieni distribuzione stelle dal backend (non dai dati paginati)
     getStarsDistribution(): { [key: string]: number } {
-        const distribution: { [key: string]: number } = { '5': 0, '4': 0, '3': 0, '2': 0, '1': 0 };
-        
-        this.recensioni.forEach(recensione => {
-            const rating = Math.floor(recensione.valutazione).toString();
-            if (rating in distribution) {
-                distribution[rating]++;
-            }
-        });
-
-        return distribution;
+        return this.distribuzioneVoti;
     }
 }

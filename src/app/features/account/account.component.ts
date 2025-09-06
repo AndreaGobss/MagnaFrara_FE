@@ -90,7 +90,8 @@ export class AccountComponent implements OnInit {
     }
 
     private loginUser(identifier: string): void {
-        this.userService.login(identifier).subscribe({
+        const loginData = { email: identifier, password: this.formData.password };
+        this.userService.login(loginData).subscribe({
             next: (user) => {
                 this.sessionService.setLoggedUser(user);
                 this.successMessage = `Benvenuto, ${user.nome}!`;

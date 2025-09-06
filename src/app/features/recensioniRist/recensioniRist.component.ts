@@ -5,6 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { SessionService } from '../../servizi/session.service';
 import { RistoranteService } from '../../servizi/ristorante.service';
 import { RecensioneService } from '../../servizi/recensione.service';
+import { ImageService } from '../../servizi/image.service';
 import { Ristorante, RistoranteUpdateRequest } from '../../modelli/ristorante.model';
 import { Recensione, RecensioneCreateRequest } from '../../modelli/recensione.model';
 import { User } from '../../modelli/user.model';
@@ -39,6 +40,7 @@ export class RecensioniRistComponent implements OnInit {
     // Stati di caricamento
     isLoading: boolean = false;
     isLoadingRecensioni: boolean = false;
+    isSortingRecensioni: boolean = false;
     errorMessage: string = '';
     
     // Form per nuova recensione
@@ -68,7 +70,8 @@ export class RecensioniRistComponent implements OnInit {
         private route: ActivatedRoute,
         private sessionService: SessionService,
         private ristoranteService: RistoranteService,
-        private recensioneService: RecensioneService
+        private recensioneService: RecensioneService,
+        private imageService: ImageService
     ) {}
 
     ngOnInit(): void {
@@ -107,7 +110,15 @@ export class RecensioniRistComponent implements OnInit {
 
     loadRecensioni(): void {
         this.isLoadingRecensioni = true;
-        
+        this.performRecensioniApiCall();
+    }
+
+    performSortRecensioni(): void {
+        this.isSortingRecensioni = true;
+        this.performRecensioniApiCall();
+    }
+
+    private performRecensioniApiCall(): void {
         const params = {
             page: this.currentPage,
             limit: 10,
@@ -122,11 +133,13 @@ export class RecensioniRistComponent implements OnInit {
                 this.totalPages = response.pagination.total_pages;
                 this.isLoading = false;
                 this.isLoadingRecensioni = false;
+                this.isSortingRecensioni = false;
             },
             error: (error) => {
                 this.errorMessage = 'Errore nel caricamento delle recensioni';
                 this.isLoading = false;
                 this.isLoadingRecensioni = false;
+                this.isSortingRecensioni = false;
                 console.error('Errore caricamento recensioni:', error);
             }
         });
@@ -135,13 +148,13 @@ export class RecensioniRistComponent implements OnInit {
     // Filtri e ordinamento
     onSortChange(): void {
         this.currentPage = 1;
-        this.loadRecensioni();
+        this.performSortRecensioni();
     }
 
     toggleSortDirection(): void {
         this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
         this.currentPage = 1;
-        this.loadRecensioni();
+        this.performSortRecensioni();
     }
 
     // Paginazione
@@ -234,7 +247,7 @@ export class RecensioniRistComponent implements OnInit {
 
         this.isUpdatingRestaurant = true;
         
-        this.ristoranteService.updateRistorante(this.ristoranteId, this.restaurantUpdateData).subscribe({
+        this.ristoranteService.updateRistorante(this.ristoranteId, this.loggedUser!.id_utente, this.restaurantUpdateData).subscribe({
             next: (updatedRistorante) => {
                 this.ristorante = updatedRistorante;
                 this.showEditRestaurant = false;
@@ -274,5 +287,18 @@ export class RecensioniRistComponent implements OnInit {
 
     goBack(): void {
         this.router.navigate(['/ristoranti']);
+    }
+
+    // Gestione immagini
+    getRistoranteImageUrl(filename: string | null | undefined): string {
+        return this.imageService.getRistoranteImageUrl(filename);
+    }
+
+    getMenuImageUrl(filename: string | null | undefined): string {
+        return this.imageService.getMenuImageUrl(filename);
+    }
+
+    onImageError(event: any): void {
+        this.imageService.onImageError(event);
     }
 }

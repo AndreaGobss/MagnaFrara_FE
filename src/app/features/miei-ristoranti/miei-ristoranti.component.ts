@@ -13,13 +13,13 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
 @Component({
-    selector: 'app-restaurant',
+    selector: 'app-miei-ristoranti',
     standalone: true,
     imports: [CommonModule, FormsModule],
-    templateUrl: './restaurant.component.html',
-    styleUrls: ['./restaurant.component.css']
+    templateUrl: './miei-ristoranti.component.html',
+    styleUrls: ['./miei-ristoranti.component.css']
 })
-export class RestaurantComponent implements OnInit, OnDestroy {
+export class MieiRistorantiComponent implements OnInit, OnDestroy {
     loggedUser: User | null = null;
     ristoranti: RistoranteListItem[] = [];
     isLoading = false;
@@ -53,6 +53,9 @@ export class RestaurantComponent implements OnInit, OnDestroy {
         // Ascoltiamo i cambiamenti di login/logout
         this.sessionService.userChanged.subscribe(user => {
             this.loggedUser = user;
+            if (user && user.gestore) {
+                this.loadRistoranti();
+            }
         });
         
         // Setup debouncing per la ricerca
@@ -66,8 +69,10 @@ export class RestaurantComponent implements OnInit, OnDestroy {
             this.performSearch();
         });
         
-        // Carica i ristoranti iniziali
-        this.loadRistoranti();
+        // Carica i ristoranti iniziali se è un gestore
+        if (this.sessionService.getLoggedUser()?.gestore) {
+            this.loadRistoranti();
+        }
     }
 
     ngOnDestroy(): void {
@@ -94,12 +99,23 @@ export class RestaurantComponent implements OnInit, OnDestroy {
     }
 
     private performApiCall(): void {
+        // Aggiungiamo il filtro per gestore_id ai parametri
+        const currentUser = this.sessionService.getLoggedUser();
+        if (!currentUser || !currentUser.gestore) {
+            this.errorMessage = 'Accesso non autorizzato. Solo i gestori possono vedere i propri ristoranti.';
+            this.isLoading = false;
+            this.isSearching = false;
+            this.isSorting = false;
+            return;
+        }
+
         const params: QueryParams = {
             page: this.currentPage,
             limit: this.ristorantiPerPagina,
             sortBy: this.sortBy,
             sort: this.sortDirection,
-            search: this.searchTerm
+            search: this.searchTerm,
+            gestore_id: currentUser.id_utente // Filtro per i ristoranti del gestore
         };
 
         this.ristoranteService.getRistoranti(params).subscribe({
@@ -113,7 +129,7 @@ export class RestaurantComponent implements OnInit, OnDestroy {
                 this.isSorting = false;
             },
             error: (error) => {
-                this.errorMessage = error.message || 'Errore nel caricamento dei ristoranti';
+                this.errorMessage = error.message || 'Errore nel caricamento dei tuoi ristoranti';
                 this.isLoading = false;
                 this.isSearching = false;
                 this.isSorting = false;
@@ -156,6 +172,13 @@ export class RestaurantComponent implements OnInit, OnDestroy {
     // Navigazione al dettaglio ristorante
     viewRistorante(ristorante: RistoranteListItem): void {
         this.router.navigate(['/ristorante', ristorante.id_ristorante]);
+    }
+
+    // Navigazione alla modifica ristorante (funzionalità extra per gestori)
+    editRistorante(ristorante: RistoranteListItem): void {
+        // Qui potresti implementare una pagina di modifica
+        console.log('Modifica ristorante:', ristorante);
+        // this.router.navigate(['/modifica-ristorante', ristorante.id_ristorante]);
     }
 
     // Genera array per stelle valutazione

@@ -18,16 +18,22 @@
       <div class="restaurant-images">
         <!-- Immagine ristorante -->
         <div class="restaurant-image">
-          <div class="image-placeholder">
-            <span class="placeholder-text">{{ ristorante.nome }}</span>
-          </div>
+          <img 
+            [src]="getRistoranteImageUrl(ristorante.rist_img)" 
+            [alt]="ristorante.nome"
+            (error)="onImageError($event)"
+            class="restaurant-img"
+          />
         </div>
         
         <!-- Immagine menu -->
         <div class="menu-image">
-          <div class="image-placeholder">
-            <span class="placeholder-text">Menu</span>
-          </div>
+          <img 
+            [src]="getMenuImageUrl(ristorante.menu_img)" 
+            [alt]="'Menu di ' + ristorante.nome"
+            (error)="onImageError($event)"
+            class="menu-img"
+          />
         </div>
       </div>
 
@@ -137,15 +143,21 @@
         <div class="filters-section">
           <div class="filter-group">
             <label for="sortBy">Ordina per:</label>
-            <select id="sortBy" [(ngModel)]="sortBy" (change)="onSortChange()" class="filter-select">
+            <select id="sortBy" [(ngModel)]="sortBy" (change)="onSortChange()" class="filter-select" [disabled]="isSortingRecensioni">
               <option value="data_pubb">Data</option>
               <option value="valutazione">Valutazione</option>
             </select>
+            <div *ngIf="isSortingRecensioni" class="sort-spinner">
+              <div class="spinner-small"></div>
+            </div>
           </div>
           
-          <button class="sort-direction-btn" (click)="toggleSortDirection()">
+          <button class="sort-direction-btn" (click)="toggleSortDirection()" [disabled]="isSortingRecensioni" [class.sorting]="isSortingRecensioni">
             <span *ngIf="sortDirection === 'asc'">↑ Crescente</span>
             <span *ngIf="sortDirection === 'desc'">↓ Decrescente</span>
+            <div *ngIf="isSortingRecensioni" class="sort-spinner-inline">
+              <div class="spinner-small"></div>
+            </div>
           </button>
         </div>
 
@@ -231,7 +243,7 @@
       </div>
 
       <!-- Lista recensioni -->
-      <div class="reviews-list" *ngIf="!isLoadingRecensioni">
+      <div class="reviews-list" *ngIf="!isLoadingRecensioni" [class.sorting]="isSortingRecensioni">
         <div class="review-card" *ngFor="let recensione of recensioni">
           <div class="review-header">
             <div class="user-info">

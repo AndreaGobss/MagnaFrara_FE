@@ -4,3 +4,4 @@ export * from './user.service';
 export * from './ristorante.service';
 export * from './recensione.service';
 export * from './error-handler.service';
+export * from './image.service';

@@ -18,5 +18,7 @@ export interface SortParams {
 }
 
 export interface QueryParams extends PaginationParams, SortParams {
+  search?: string; // termine di ricerca
+  gestore_id?: number; // filtro per ristoranti di un gestore specifico
   // Può essere esteso per altri parametri di query specifici
 }
