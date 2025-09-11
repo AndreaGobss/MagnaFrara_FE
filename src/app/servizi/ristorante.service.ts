@@ -13,7 +13,6 @@ import { EnvironmentService } from './environment.service';
 @Injectable({ providedIn: 'root' })
 export class RistoranteService {
     private apiUrl = 'http://localhost:8080/api/ristoranti';
-
     constructor(
         private http: HttpClient,
         private env: EnvironmentService
@@ -48,22 +47,6 @@ export class RistoranteService {
 
         const params = new HttpParams().set('id_utente', idUtente.toString());
         return this.http.put<ApiResponse<Ristorante>>(`${this.apiUrl}/${id}`, updateData, { params })
-            .pipe(map(response => response.data!));
-    }
-
-    // Ottieni i ristoranti di un gestore specifico
-    getRistorantiByGestore(idUtente: number, params?: QueryParams): Observable<RistorantiListResponse> {
-        let httpParams = new HttpParams().set('gestore_id', idUtente.toString());
-        
-        if (params) {
-            if (params.page) httpParams = httpParams.set('page', params.page.toString());
-            if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
-            if (params.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
-            if (params.sort) httpParams = httpParams.set('sort', params.sort);
-            if (params.search && params.search.trim()) httpParams = httpParams.set('search', params.search.trim());
-        }
-
-        return this.http.get<ApiResponse<RistorantiListResponse>>(`${this.apiUrl}/gestore`, { params: httpParams })
             .pipe(map(response => response.data!));
     }
 

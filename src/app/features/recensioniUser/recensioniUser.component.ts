@@ -36,6 +36,7 @@ export class RecensioniUserComponent implements OnInit {
     // Stati di caricamento
     isLoading: boolean = false;
     errorMessage: string = '';
+    private savedScrollPosition: number = 0;
 
     constructor(
         private router: Router,
@@ -91,6 +92,11 @@ export class RecensioniUserComponent implements OnInit {
                 }
                 
                 this.isLoading = false;
+                
+                // Ripristina la posizione di scroll salvata
+                if (this.savedScrollPosition > 0) {
+                    this.restoreScrollPosition();
+                }
             },
             error: (error) => {
                 this.errorMessage = 'Errore nel caricamento delle tue recensioni';
@@ -100,13 +106,50 @@ export class RecensioniUserComponent implements OnInit {
         });
     }
 
+    private scrollToFilters(): void {
+        setTimeout(() => {
+            const filtersElement = document.getElementById('filters-section');
+            if (filtersElement) {
+                filtersElement.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }
+        }, 100); // Piccolo delay per assicurarsi che il DOM sia aggiornato
+    }
+
+    private scrollToReviews(): void {
+        setTimeout(() => {
+            const reviewsElement = document.getElementById('reviews-list');
+            if (reviewsElement) {
+                reviewsElement.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }
+        }, 100);
+    }
+
+    private saveScrollPosition(): void {
+        this.savedScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+    }
+
+    private restoreScrollPosition(): void {
+        setTimeout(() => {
+            window.scrollTo(0, this.savedScrollPosition);
+            this.savedScrollPosition = 0; // Reset dopo l'uso
+        }, 50); // Delay minimo per assicurarsi che il DOM sia renderizzato
+    }
+
     // Filtri e ordinamento
     onSortChange(): void {
+        this.saveScrollPosition(); // Salva la posizione corrente
         this.currentPage = 1;
         this.loadUserRecensioni();
     }
 
     toggleSortDirection(): void {
+        this.saveScrollPosition(); // Salva la posizione corrente
         this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
         this.currentPage = 1;
         this.loadUserRecensioni();
@@ -115,6 +158,7 @@ export class RecensioniUserComponent implements OnInit {
     // Paginazione
     goToPage(page: number): void {
         if (page >= 1 && page <= this.totalPages) {
+            this.saveScrollPosition(); // Salva la posizione corrente
             this.currentPage = page;
             this.loadUserRecensioni();
         }

@@ -50,7 +50,7 @@
     </div>
 
     <!-- Filtri e ordinamento -->
-    <div class="filters-section" *ngIf="totalRecensioni > 0">
+    <div id="filters-section" class="filters-section" *ngIf="totalRecensioni > 0">
       <h2>Le tue recensioni</h2>
       
       <div class="filters-controls">
@@ -70,7 +70,7 @@
     </div>
 
     <!-- Lista recensioni -->
-    <div class="reviews-list" *ngIf="totalRecensioni > 0">
+    <div id="reviews-list" class="reviews-list" *ngIf="totalRecensioni > 0">
       <div class="review-card" *ngFor="let recensione of recensioni">
         <div class="review-header">
           <div class="restaurant-info">

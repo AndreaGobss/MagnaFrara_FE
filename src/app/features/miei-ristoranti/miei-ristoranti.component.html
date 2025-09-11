@@ -116,13 +116,13 @@
             <p class="restaurant-description">
               {{ ristorante.descrizione.length > 100 ? 
                  (ristorante.descrizione | slice:0:100) + '...' : 
-                 ristorante.descrizione }}
+                 ristorante.descrizione }} <br>
             </p>
 
             <!-- Azioni per gestore -->
-            <div class="restaurant-actions">
+            <div class="restaurant-actions"> <br>
               <button 
-                class="btn btn-primary"
+                class="sort-direction-btn"
                 (click)="viewRistorante(ristorante)">
                 Visualizza
               </button>
