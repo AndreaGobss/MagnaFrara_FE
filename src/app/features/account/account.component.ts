@@ -111,10 +111,10 @@ export class AccountComponent implements OnInit {
     logout(): void {
         this.sessionService.clearLoggedUser();
         this.successMessage = 'Logout effettuato con successo!';
-        setTimeout(() => {
-            this.clearMessages();
-            this.router.navigate(['/ristoranti']);
-        }, 1000);
+        //setTimeout(() => {
+        //     this.clearMessages();
+        //     this.router.navigate(['/ristoranti']);
+        //}, 1000);
     }
 
     private clearMessages(): void {

@@ -65,6 +65,11 @@ export class RecensioniRistComponent implements OnInit {
     };
     isUpdatingRestaurant: boolean = false;
 
+    // Modal per visualizzazione immagini
+    showImageModal: boolean = false;
+    modalImageUrl: string = '';
+    modalImageAlt: string = '';
+
     constructor(
         private router: Router,
         private route: ActivatedRoute,
@@ -300,5 +305,22 @@ export class RecensioniRistComponent implements OnInit {
 
     onImageError(event: any): void {
         this.imageService.onImageError(event);
+    }
+
+    // Gestione modal immagini
+    openImageModal(imageUrl: string, imageAlt: string): void {
+        this.modalImageUrl = imageUrl;
+        this.modalImageAlt = imageAlt;
+        this.showImageModal = true;
+        // Previene lo scroll della pagina quando il modal è aperto
+        document.body.style.overflow = 'hidden';
+    }
+
+    closeImageModal(): void {
+        this.showImageModal = false;
+        this.modalImageUrl = '';
+        this.modalImageAlt = '';
+        // Ripristina lo scroll della pagina
+        document.body.style.overflow = '';
     }
 }

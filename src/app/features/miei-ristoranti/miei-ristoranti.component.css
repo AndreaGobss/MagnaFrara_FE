@@ -6,7 +6,7 @@
 
 .restaurants-container h1 {
   text-align: center;
-  color: #2c3e50;
+  color: #212121;
   margin-bottom: 2rem;
   font-size: 2.5rem;
 }
@@ -52,7 +52,7 @@
 
 .search-input:focus {
   outline: none;
-  border-color: #3498db;
+  border-color: #A9192C;
   box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
 
@@ -90,7 +90,7 @@
   width: 16px;
   height: 16px;
   border: 2px solid #e9ecef;
-  border-top: 2px solid #3498db;
+  border-top: 2px solid #A9192C;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -156,7 +156,7 @@
 
 .filter-group label {
   font-weight: 500;
-  color: #2c3e50;
+  color: #212121;
   white-space: nowrap;
 }
 
@@ -171,7 +171,7 @@
 
 .sort-direction-btn {
   padding: 0.5rem 1rem;
-  background-color: #3498db;
+  background-color: #cd3246;
   color: white;
   white-space: nowrap;
   border: none;
@@ -182,7 +182,7 @@
 }
 
 .sort-direction-btn:hover {
-  background-color: #2980b9;
+  background-color: #A9192C;
 }
 
 /* Container principale con altezza minima fissa per evitare spostamenti */
@@ -364,7 +364,7 @@
 }
 
 .tipo-cucina {
-  background-color: rgba(52, 152, 219, 0.9);
+  background-color: #cd3246;
   color: white;
   padding: 0.3rem 0.8rem;
   border-radius: 20px;
@@ -380,7 +380,7 @@
 .restaurant-name {
   font-size: 1.3rem;
   font-weight: 600;
-  color: #2c3e50;
+  color: #212121;
   margin: 0 0 1rem 0;
 }
 
@@ -408,7 +408,7 @@
 
 .rating-number {
   font-weight: 600;
-  color: #2c3e50;
+  color: #212121;
   margin-left: 0.5rem;
 }
 
@@ -472,9 +472,9 @@
 }
 
 .page-btn.active {
-  background-color: #3498db;
+  background-color: #cd3246;
   color: white;
-  border-color: #3498db;
+  border-color: #cd3246;
 }
 
 .btn {

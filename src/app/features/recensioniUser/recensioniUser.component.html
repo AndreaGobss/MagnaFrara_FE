@@ -18,6 +18,37 @@
     <!-- Statistiche utente -->
     <div class="user-stats" *ngIf="totalRecensioni > 0">
       <div class="stats-card">
+        <!-- Livello utente (Gamification) -->
+        <div class="user-level-section">
+          <div class="level-card">
+            <div class="level-header">
+              <div class="level-badge">
+                <span class="level-number">LVL {{ getUserLevel().level }}</span>
+              </div>
+              <div class="level-info">
+                <h3 class="level-title">{{ getUserLevel().title }}</h3>
+                <p class="level-description">{{ getUserLevel().description }}</p>
+              </div>
+            </div>
+            
+            <!-- Barra progresso verso prossimo livello -->
+            <div class="level-progress" *ngIf="getUserLevel().progress < 100">
+              <div class="progress-header">
+                <span class="progress-label">Progresso verso il prossimo livello</span>
+                <span class="progress-text">{{ totalRecensioni }}/{{ getUserLevel().nextLevelAt }}</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="getUserLevel().progress"></div>
+              </div>
+            </div>
+            
+            <!-- Messaggio livello massimo -->
+            <div class="max-level-message" *ngIf="getUserLevel().progress >= 100">
+              <span class="max-level-text">🏆 Hai raggiunto il livello massimo! Sei una leggenda! 🏆</span>
+            </div>
+          </div>
+        </div>
+
         <h2>Le tue statistiche</h2>
         <div class="stats-grid">
           <div class="stat-item">

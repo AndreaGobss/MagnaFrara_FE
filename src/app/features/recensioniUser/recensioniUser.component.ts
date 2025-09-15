@@ -212,4 +212,50 @@ export class RecensioniUserComponent implements OnInit {
     getStarsDistribution(): { [key: string]: number } {
         return this.distribuzioneVoti;
     }
+
+    // Sistema di gamification - Calcola livello e titolo in base al numero di recensioni
+    getUserLevel(): { level: number; title: string; description: string; nextLevelAt: number; progress: number } {
+        const numRecensioni = this.totalRecensioni;
+        
+        // Definizione dei livelli e titoli
+        const levels = [
+            { threshold: 0, title: "Neofita Cappellaccio", description: "Hai appena iniziato il tuo viaggio culinario!" },
+            { threshold: 3, title: "Assaggiatore Curioso", description: "Stai iniziando a esplorare nuovi sapori" },
+            { threshold: 7, title: "Buongustaio Promettente", description: "Il tuo palato si sta raffinando" },
+            { threshold: 12, title: "Critico Gastronomico", description: "Le tue recensioni sono sempre attendibili" },
+            { threshold: 20, title: "Esperto Cappelletto", description: "Conosci i segreti della buona cucina" },
+            { threshold: 30, title: "Maestro Estensi", description: "Il tuo giudizio è rispettato da tutti" },
+            { threshold: 45, title: "Sommo Tagliatelliere", description: "Sei una leggenda del food reviewing" },
+            { threshold: 65, title: "Imperatore del Gusto", description: "Il tuo palato è infallibile" },
+            { threshold: 90, title: "Divinità Culinaria", description: "Hai raggiunto l'illuminazione gastronomica" },
+            { threshold: 120, title: "Leggenda Immortale", description: "Il tuo nome sarà ricordato nei secoli" }
+        ];
+
+        // Trova il livello attuale
+        let currentLevel = levels[0];
+        let currentLevelIndex = 0;
+        
+        for (let i = levels.length - 1; i >= 0; i--) {
+            if (numRecensioni >= levels[i].threshold) {
+                currentLevel = levels[i];
+                currentLevelIndex = i;
+                break;
+            }
+        }
+
+        // Calcola il progresso verso il prossimo livello
+        const nextLevel = levels[currentLevelIndex + 1];
+        const nextLevelAt = nextLevel ? nextLevel.threshold : currentLevel.threshold;
+        const prevLevelAt = currentLevel.threshold;
+        const progress = nextLevel ? 
+            Math.floor(((numRecensioni - prevLevelAt) / (nextLevelAt - prevLevelAt)) * 100) : 100;
+
+        return {
+            level: currentLevelIndex + 1,
+            title: currentLevel.title,
+            description: currentLevel.description,
+            nextLevelAt: nextLevelAt,
+            progress: Math.min(progress, 100)
+        };
+    }
 }

@@ -22,7 +22,8 @@
             [src]="getRistoranteImageUrl(ristorante.rist_img)" 
             [alt]="ristorante.nome"
             (error)="onImageError($event)"
-            class="restaurant-img"
+            (click)="openImageModal(getRistoranteImageUrl(ristorante.rist_img), ristorante.nome)"
+            class="restaurant-img clickable-image"
           />
         </div>
         
@@ -32,7 +33,8 @@
             [src]="getMenuImageUrl(ristorante.menu_img)" 
             [alt]="'Menu di ' + ristorante.nome"
             (error)="onImageError($event)"
-            class="menu-img"
+            (click)="openImageModal(getMenuImageUrl(ristorante.menu_img), 'Menu di ' + ristorante.nome)"
+            class="menu-img clickable-image"
           />
         </div>
       </div>
@@ -316,5 +318,21 @@
   <div class="error-message" *ngIf="errorMessage">
     <p>{{ errorMessage }}</p>
     <button class="btn btn-secondary" (click)="loadRistoranteData()">Riprova</button>
+  </div>
+
+  <!-- Modal per visualizzare immagini ingrandite -->
+  <div class="image-modal" *ngIf="showImageModal" (click)="closeImageModal()">
+    <div class="modal-overlay"></div>
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeImageModal()">×</button>
+      <img 
+        [src]="modalImageUrl" 
+        [alt]="modalImageAlt"
+        class="modal-image"
+        (error)="onImageError($event)">
+      <div class="modal-caption" *ngIf="modalImageAlt">
+        {{ modalImageAlt }}
+      </div>
+    </div>
   </div>
 </div>

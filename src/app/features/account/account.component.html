@@ -78,16 +78,6 @@
             class="form-control">
         </div>
 
-        <!-- Checkbox gestore (solo per registrazione) -->
-        <div class="form-group checkbox-group" *ngIf="isRegistering">
-          <label class="checkbox-label">
-            <input 
-              type="checkbox" 
-              name="gestore" 
-              [(ngModel)]="formData.gestore">
-          </label>
-        </div>
-
         <!-- Pulsanti -->
         <div class="form-actions">
           <button 
