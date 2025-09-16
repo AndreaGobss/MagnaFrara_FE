@@ -161,8 +161,14 @@ export class RestaurantComponent implements OnInit, OnDestroy {
     // Genera array per stelle valutazione
     getStars(rating: number): number[] {
         const stars = [];
+        const fullStars = Math.floor(rating); // Stelle piene
+        
         for (let i = 1; i <= 5; i++) {
-            stars.push(i <= rating ? 1 : 0);
+            if (i <= fullStars) {
+                stars.push(1); // Stella piena
+            } else {
+                stars.push(0); // Stella vuota
+            }
         }
         return stars;
     }

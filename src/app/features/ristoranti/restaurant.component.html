@@ -105,7 +105,7 @@
                 <span 
                   *ngFor="let star of getStars(ristorante.avg_valutazione); let i = index"
                   class="star"
-                  [class.filled]="star === 1">
+                  [class.empty]="star === 0">
                   ★
                 </span>
               </div>
