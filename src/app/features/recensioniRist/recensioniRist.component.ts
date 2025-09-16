@@ -70,6 +70,9 @@ export class RecensioniRistComponent implements OnInit {
     modalImageUrl: string = '';
     modalImageAlt: string = '';
 
+    // Modal YourPasta (solo per ristorante ID 16)
+    showYourPastaModal: boolean = false;
+
     constructor(
         private router: Router,
         private route: ActivatedRoute,
@@ -258,7 +261,6 @@ export class RecensioniRistComponent implements OnInit {
                 this.showEditRestaurant = false;
                 this.isUpdatingRestaurant = false;
                 // Opzionalmente mostra un messaggio di successo
-                alert('Ristorante aggiornato con successo!');
             },
             error: (error) => {
                 this.isUpdatingRestaurant = false;
@@ -322,5 +324,23 @@ export class RecensioniRistComponent implements OnInit {
         this.modalImageAlt = '';
         // Ripristina lo scroll della pagina
         document.body.style.overflow = '';
+    }
+
+    // Gestione modal YourPasta
+    openYourPastaModal(): void {
+        this.showYourPastaModal = true;
+        // Previene lo scroll della pagina quando il modal è aperto
+        document.body.style.overflow = 'hidden';
+    }
+
+    closeYourPastaModal(): void {
+        this.showYourPastaModal = false;
+        // Ripristina lo scroll della pagina
+        document.body.style.overflow = '';
+    }
+
+    handleYourPastaOrder(): void {
+        // Funzionalità "finta" - non fa nulla ma simula un'azione
+        this.closeYourPastaModal();
     }
 }

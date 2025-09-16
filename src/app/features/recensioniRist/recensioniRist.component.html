@@ -71,6 +71,13 @@
           </button>
         </div>
 
+        <!-- Azione speciale YourPasta (solo per ristorante ID 16) -->
+        <div class="yourpasta-section" *ngIf="ristorante.id_ristorante === 16">
+          <button class="btn btn-yourpasta" (click)="openYourPastaModal()">
+            🍝 Componi il tuo piatto
+          </button>
+        </div>
+
         <!-- Form modifica ristorante (solo gestori) -->
         <div class="edit-restaurant-form" *ngIf="showEditRestaurant && isGestore">
           <div class="form-container">
@@ -332,6 +339,55 @@
         (error)="onImageError($event)">
       <div class="modal-caption" *ngIf="modalImageAlt">
         {{ modalImageAlt }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal YourPasta -->
+  <div class="yourpasta-modal" *ngIf="showYourPastaModal" (click)="closeYourPastaModal()">
+    <div class="modal-overlay"></div>
+    <div class="modal-content yourpasta-content" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeYourPastaModal()">×</button>
+      
+      <div class="yourpasta-header">
+        <h2 class="yourpasta-title">🍝 YourPasta</h2>
+        <p class="yourpasta-subtitle">Crea il tuo piatto personalizzato</p>
+      </div>
+      
+      <div class="yourpasta-body">
+        <p class="yourpasta-description">
+          Grazie alla collaborazione esclusiva tra <strong>MagnaFrara</strong> e <strong>YourPasta</strong>, 
+          puoi ora accedere direttamente al portale di YourPasta per creare il tuo piatto personalizzato!
+        </p>
+        
+        <div class="yourpasta-features">
+          <div class="feature-item">
+            <span class="feature-icon">🎨</span>
+            <span class="feature-text">Personalizza ingredienti e porzioni</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🔮</span>
+            <span class="feature-text">Crea combinazioni uniche e sempre diverse</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">✅</span>
+            <span class="feature-text">Ordina facilmente e senza attese</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">⭐</span>
+            <span class="feature-text">Ingredienti di prima qualità</span>
+          </div>
+        </div>
+        
+        <p class="yourpasta-cta">
+          Scopri centinaia di combinazioni possibili e crea il piatto perfetto per te!
+        </p>
+      </div>
+      
+      <div class="yourpasta-actions">
+        <button class="btn btn-yourpasta-order" (click)="handleYourPastaOrder()">
+          🛒 Ordina ora
+        </button>
       </div>
     </div>
   </div>
