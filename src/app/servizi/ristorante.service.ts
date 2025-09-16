@@ -29,6 +29,7 @@ export class RistoranteService {
             if (params.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
             if (params.sort) httpParams = httpParams.set('sort', params.sort);
             if (params.search && params.search.trim()) httpParams = httpParams.set('search', params.search.trim());
+            if (params.gestore_id) httpParams = httpParams.set('gestore_id', params.gestore_id.toString());
         }
 
         return this.http.get<ApiResponse<RistorantiListResponse>>(this.apiUrl, { params: httpParams })
